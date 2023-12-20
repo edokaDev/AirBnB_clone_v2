@@ -14,8 +14,7 @@ class FileStorage:
         if cls is not None:
             cls_all = {}
             for key, value in FileStorage.__objects.items():
-                key_ls = key.split('.')
-                if cls == key_ls[0]:
+                if cls == type(value):
                     cls_all[key] = value
             return cls_all
         return FileStorage.__objects
@@ -31,7 +30,7 @@ class FileStorage:
             temp.update(FileStorage.__objects)
             for key, val in temp.items():
                 temp[key] = val.to_dict()
-            json.dump(temp, f)
+            json.dump(temp, f, indent=4)
 
     def reload(self):
         """Load storage dictionary from file."""
@@ -60,6 +59,7 @@ class FileStorage:
     def delete(self, obj=None):
         """Delete obj from __objects."""
         if obj is not None:
+            fs = FileStorage()
             for key, value in FileStorage.__objects.items():
                 if value == obj:
                     del FileStorage.__objects[key]
