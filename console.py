@@ -27,7 +27,13 @@ class HBNBCommand(cmd.Cmd):
     types = {
              'number_rooms': int, 'number_bathrooms': int,
              'max_guest': int, 'price_by_night': int,
-             'latitude': float, 'longitude': float
+             'latitude': float, 'longitude': float,
+             'city_id': str, 'user_id': str,
+             'name': str, 'description': str,
+             'amenities_ids': list, 'text': str,
+             'place_id': str, 'state_id': str,
+             'email': str, 'state_id': str,
+             'first_name':str, 'last_name': str
             }
 
     def preloop(self):
@@ -73,8 +79,8 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
-                            and type(eval(pline)) is dict:
+                    if pline[0] == '{' and pline[-1] =='}'\
+                            and type(eval(pline)) == dict:
                         _args = pline
                     else:
                         _args = pline.replace(',', '')
@@ -118,10 +124,30 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        line = args.split(" ")
+        cls = line[0]
+        if cls not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        del line[0]
+        new_instance = HBNBCommand.classes[cls]()
+        for ar in line:
+
+            arg = ar.split("=")
+            key = arg[0]
+            try:
+                value = arg[1]
+            except IndexError:
+                continue
+            if key not in HBNBCommand.types:
+                continue
+            value = value.strip('"').strip("'").replace("_", " ")
+            try:
+                value = HBNBCommand.types[key](value)
+            except:
+                # invalid, skip
+                continue
+            new_instance.__dict__[key] = value
         storage.save()
         print(new_instance.id)
         storage.save()
@@ -272,7 +298,7 @@ class HBNBCommand(cmd.Cmd):
                 args.append(v)
         else:  # isolate args
             args = args[2]
-            if args and args[0] is '\"':  # check for quoted arg
+            if args and args[0] == '\"':  # check for quoted arg
                 second_quote = args.find('\"', 1)
                 att_name = args[1:second_quote]
                 args = args[second_quote + 1:]
@@ -280,10 +306,10 @@ class HBNBCommand(cmd.Cmd):
             args = args.partition(' ')
 
             # if att_name was not quoted arg
-            if not att_name and args[0] is not ' ':
+            if not att_name and args[0] != ' ':
                 att_name = args[0]
             # check for quoted val arg
-            if args[2] and args[2][0] is '\"':
+            if args[2] and args[2][0] == '\"':
                 att_val = args[2][1:args[2].find('\"', 1)]
 
             # if att_val was not quoted arg
