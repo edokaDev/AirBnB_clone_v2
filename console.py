@@ -10,6 +10,9 @@ from models.state import State
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+import os
+
+HBNB_TYPE_STORAGE = os.environ.get('HBNB_TYPE_STORAGE')
 
 
 class HBNBCommand(cmd.Cmd):
@@ -148,7 +151,7 @@ class HBNBCommand(cmd.Cmd):
                 # invalid, skip
                 continue
             new_instance.__dict__[key] = value
-        storage.save()
+        storage.new(new_instance)
         print(new_instance.id)
         storage.save()
 
@@ -225,6 +228,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
+        from datetime import datetime
         print_list = []
 
         if args:
@@ -232,14 +236,41 @@ class HBNBCommand(cmd.Cmd):
             if args not in HBNBCommand.classes:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
+            if HBNB_TYPE_STORAGE == 'db':
+                dictionary = storage.all(HBNBCommand.classes[args])
+                print("[", end="")
+                values = dictionary
+
+                length = len(values)
+                i = 1
+                        
+                for value in values:
+                    cls_name = f"[{value.__class__.__name__}]"
+                    obj_id = f"({value.id})"
+                    obj_dict = value.to_dict()
+                    del obj_dict['__class__']
+                    obj_dict['updated_at'] = datetime.fromisoformat(obj_dict['updated_at'])
+                    obj_dict['created_at'] = datetime.fromisoformat(obj_dict['created_at'])
+                    obj_dict = str(obj_dict)
+                    combo_list = [cls_name, obj_id, obj_dict]
+                    combo = " ".join(combo_list)
+                    if i != length:
+                        print(combo, end=", ")
+                    else:
+                        print(combo, end="")
+                    i += 1
+                print("]")
+                return
+            else:
+                for k, v in storage._FileStorage__objects.items():
+                    if k.split('.')[0] == args:
+                        print_list.append(str(v))
         else:
             for k, v in storage._FileStorage__objects.items():
                 print_list.append(str(v))
-
         print(print_list)
+
+
 
     def help_all(self):
         """ Help information for the all command """
