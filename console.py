@@ -36,7 +36,8 @@ class HBNBCommand(cmd.Cmd):
              'amenities_ids': list, 'text': str,
              'place_id': str, 'state_id': str,
              'email': str, 'state_id': str,
-             'first_name':str, 'last_name': str
+             'first_name':str, 'last_name': str,
+             'password': str,
             }
 
     def preloop(self):
@@ -377,5 +378,3 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
-if __name__ == "__main__":
-    HBNBCommand().cmdloop()
