@@ -16,5 +16,4 @@ class User(BaseModel, Base):
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     places = Relationship('Place', backref='users', cascade='all, delete-orphan')
-    reviews = Relationship('Review', backref='users', cascade='all, delete-orphan')
 
