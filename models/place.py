@@ -5,7 +5,8 @@ from sqlalchemy import Column, String, ForeignKey, Integer, Float, DateTime
 from datetime import datetime
 from sqlalchemy.orm import relationship
 from .review import Review
-
+import os
+from .amenity import Amenity
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -24,6 +25,29 @@ class Place(BaseModel, Base):
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     reviews = relationship('Review', backref='places', cascade='all, delete-orphan')
     amenity_ids = []
+
+    if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        amenities = relationship('Amenity', secondary='place_amenity', viewonly=False)
+
+    else:
+        @property
+        def amenities(self):
+            """Getter attribute amenities that returns the list of Amenity instances based on the attribute amenity_ids"""
+            from models import storage
+
+            amenities_list = []
+            for amenity_id in self.amenity_ids:
+                amenity = storage.get(Amenity, amenity_id)
+                if amenity:
+                    amenities_list.append(amenity)
+            return amenities_list
+        
+        @amenities.setter
+        def amenities(self, obj):
+            """Setter attribute amenities that handles append method for adding \
+an Amenity.id to the attribute amenity_ids"""
+            if isinstance(obj, Amenity):
+                self.amenity_ids.append(obj.id)
 
     @property
     def reviews(self):
