@@ -2,7 +2,7 @@
 """This module defines a class User"""
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, DateTime
-from sqlalchemy.orm import Relationship
+from sqlalchemy.orm import relationship
 from datetime import datetime
 
 
@@ -15,5 +15,5 @@ class User(BaseModel, Base):
     last_name = Column(String(128), nullable=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-    places = Relationship('Place', backref='users', cascade='all, delete-orphan')
-
+    places = relationship('Place', backref='users', cascade='all, delete-orphan')
+    reviews = relationship('Review', backref='users', cascade='all, delete-orphan')
