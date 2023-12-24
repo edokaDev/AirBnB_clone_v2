@@ -20,4 +20,3 @@ class Amenity(BaseModel, Base):
 
     places = relationship('Place', secondary=place_amenities, back_populates='amenities')
 
-from models.place import Place
