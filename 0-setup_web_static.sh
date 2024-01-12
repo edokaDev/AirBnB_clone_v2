@@ -32,17 +32,18 @@ echo "Ceci n'est pas une page" | sudo tee /var/www/html/error-page.html
 printf %s "server {
 	listen 80 default_server;
 	listen [::]:80 default_server;
-	add_header X-Served-By \$hostname always;
-	root /var/www/html;
-	index index.html index.htm
 
-	rewrite ^/redirect_me http://edoka.tech permanent;
+	root /var/www/html;
+
+	index index.html index.htm index.nginx-debian.html;
+	add_header X-Served-By \$hostname always;
 	error_page 404 /error-page.html;
+	server_name _;
+	rewrite ^/redirect_me http://edoka.tech permanent;
 
 	location / {
 		try_files \$uri \$uri/ =404;
 	}
-
 	location /hbnb_static {
 		alias /data/web_static/current/;
 		index index.html index.htm;
