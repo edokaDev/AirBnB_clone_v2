@@ -17,9 +17,9 @@ def do_deploy(archive_path):
         return False
     if run('sudo rm -rf /data/webstatic/releases/{}'.format(line)).failed:
         return False
-    if run('sudo mkdir -p /data/web_Static/releases/{}/'.format(line)).failed:
+    if run('sudo mkdir -p /data/web_static/releases/{}/'.format(line)).failed:
         return False
-    if run('sudo tar -xzf /tmp/{} -C /data/web_Static/releases/{}/'
+    if run('sudo tar -xzf /tmp/{} -C /data/web_static/releases/{}/'
            .format(path, line)).failed:
         return False
     if run('sudo rm /tmp/{}'.format(path)).failed:
@@ -30,9 +30,9 @@ def do_deploy(archive_path):
     if run('sudo rm -rf /data/web_static/releases/{}/web_static'
            .format(line)).failed:
         return False
-    if run('sudo rm -rf` /data/web_Static/current').failed:
+    if run('sudo rm -rf` /data/web_static/current').failed:
         return False
-    if run('sudo ln -s /data/web_static/release/{}/ /data/web_Static/current'
+    if run('sudo ln -s /data/web_static/releases/{}/ /data/web_static/current'
            .format(line)).failed:
         return False
     run('sudo systemctl restart nginx')
