@@ -1,0 +1,61 @@
+#!/usr/bin/python3
+"""Hello Flask!."""
+from flask import Flask
+from flask import render_template
+
+app = Flask(__name__)
+
+
+@app.route('/', strict_slashes=False)
+def hello():
+    """Hello Flask."""
+    return "Hello HBNB!"
+
+
+@app.route('/hbnb', strict_slashes=False)
+def hbnb_route():
+    """HBNB Route."""
+    return "HBNB"
+
+
+@app.route('/c/<text>', strict_slashes=False)
+def c_route(text: str):
+    """C Route."""
+    text = text.replace('_', ' ')
+    return "C {}".format(text)
+
+
+@app.route('/python', strict_slashes=False)
+@app.route('/python/<text>', strict_slashes=False)
+def python_route(text: str = "is cool"):
+    """Python Route.
+
+    This route uses multiple decorators to handle optional parameter cases.
+    """
+    text = text.replace('_', ' ')
+    return "Python {}".format(text)
+
+
+@app.route('/number/<int:n>', strict_slashes=False)
+def number_route(n: int):
+    """N Route."""
+    return "{} is a number".format(n)
+
+
+@app.route('/number_template/<int:n>', strict_slashes=False)
+def number_template_route(n: int):
+    """Template Route."""
+    return render_template('5-number.html', number=n)
+
+
+@app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
+def even_odd_route(n: int):
+    """Template Route."""
+    tag = 'odd'
+    if n % 2 == 0:
+        tag = 'even'
+    return render_template('6-number_odd_or_even.html', number=n, tag=tag)
+
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
