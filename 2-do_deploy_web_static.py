@@ -15,7 +15,7 @@ def do_deploy(archive_path):
         return False
     if put(archive_path, '/tmp/{}'.format(path)).failed:
         return False
-    if run('sudo rm -rf /data/webstatic/releases/{}'.format(line)).failed:
+    if run('sudo rm -rf /data/web_static/releases/{}'.format(line)).failed:
         return False
     if run('sudo mkdir -p /data/web_static/releases/{}/'.format(line)).failed:
         return False
@@ -30,7 +30,7 @@ def do_deploy(archive_path):
     if run('sudo rm -rf /data/web_static/releases/{}/web_static'
            .format(line)).failed:
         return False
-    if run('sudo rm -rf` /data/web_static/current').failed:
+    if run('sudo rm -rf /data/web_static/current').failed:
         return False
     if run('sudo ln -s /data/web_static/releases/{}/ /data/web_static/current'
            .format(line)).failed:
