@@ -18,4 +18,4 @@ class Amenity(BaseModel, Base):
                             Column('place_id', String(60), ForeignKey('places.id'), primary_key=True, nullable=False)
                             )
 
-    places = relationship('Place', secondary=place_amenities, back_ref='amenities', back_populates='amenities')
+    places = relationship('Place', secondary=place_amenities, back_populates='amenities')
