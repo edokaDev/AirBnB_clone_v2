@@ -64,3 +64,7 @@ class FileStorage:
                 if value == obj:
                     del FileStorage.__objects[key]
                     return
+
+    def close(self):
+        """Close the storage connection."""
+        self.reload()

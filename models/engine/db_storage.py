@@ -19,13 +19,20 @@ HBNB_ENV = os.environ.get('HBNB_ENV')
 
 
 class DBStorage:
+    """Database storage class."""
+
     __engine = None
     __session = None
 
     def __init__(self):
-        """Creates an engine that links to the database."""
+        """Create an engine that links to the database."""
         self.__engine = create_engine(
-            f'mysql+mysqldb://{HBNB_MYSQL_USER}:{HBNB_MYSQL_PWD}@{HBNB_MYSQL_HOST}/{HBNB_MYSQL_DB}',
+            'mysql+mysqldb://{}:{}@{}/{}'.format(
+                HBNB_MYSQL_USER,
+                HBNB_MYSQL_PWD,
+                HBNB_MYSQL_HOST,
+                HBNB_MYSQL_DB
+            ),
             pool_pre_ping=True)
 
         if HBNB_ENV:
@@ -33,7 +40,7 @@ class DBStorage:
                 Base.metadata.drop_all(self.engine)
 
     def all(self, cls=None):
-        """"Returns a dictionary conataning <class>.<id>: <table_object>."""
+        """Return a dictionary conataning <class>.<id>: <table_object>."""
         if cls is None:
             rows_dict = {}
             types = [User, State, City, Amenity, Place, Review]
@@ -50,22 +57,27 @@ class DBStorage:
             return rows
 
     def new(self, obj):
-        """Adds a new object (table) to a session."""
+        """Add a new object (table) to a session."""
         self.__session.add(obj)
 
     def save(self):
-        """Commits the session changes to the database."""
+        """Commit the session changes to the database."""
         self.__session.commit()
 
     def delete(self, obj=None):
-        """Deletes an object from the database if its not None."""
+        """Delete an object from the database if its not None."""
         if obj:
             self.__session.delete(obj)
             self.__session.commit()
 
     def reload(self):
-        """Creates all tables in the database."""
-        session_factory = sessionmaker(bind=self.__engine, expire_on_commit=False)
+        """Create all tables in the database."""
+        session_factory = sessionmaker(bind=self.__engine,
+                                       expire_on_commit=False)
         Session = scoped_session(session_factory)
         self.__session = Session()
         Base.metadata.create_all(self.__engine)
+
+    def close(self):
+        """Close the database connection."""
+        self.__session.close()
