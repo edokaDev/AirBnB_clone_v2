@@ -37,28 +37,24 @@ class Place(BaseModel, Base):
                 reviews_list.append(all_reviews_dict[review])
         return reviews_list
 
-    @property
-    def amenities(self):
-        """Getter attribute amenities that returns the list of Amenity instances based on the attribute amenity_ids"""
-        from models import storage
+    if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        amenities = relationship('Amenity', secondary='place_amenity', viewonly=False)
+    else:
+        @property
+        def amenities(self):
+            """Getter attribute amenities that returns the list of Amenity instances based on the attribute amenity_ids"""
+            from models import storage
 
-        amenities_list = []
-        for amenity_id in self.amenity_ids:
-            amenity = storage.get(Amenity, amenity_id)
-            if amenity:
-                amenities_list.append(amenity)
-        return amenities_list
+            amenities_list = []
+            for amenity_id in self.amenity_ids:
+                amenity = storage.get(Amenity, amenity_id)
+                if amenity:
+                    amenities_list.append(amenity)
+            return amenities_list
 
-    @amenities.setter
-    def amenities(self, obj):
-        """Setter attribute amenities that handles append method for adding \
-        an Amenity.id to the attribute amenity_ids"""
-        if isinstance(obj, Amenity):
-            self.amenity_ids.append(obj.id)
-
-if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-    Place.amenities = relationship('Amenity',
-                                   secondary='place_amenity',
-                                   viewonly=False,
-                                   backref='places')
-
+        @amenities.setter
+        def amenities(self, obj):
+            """Setter attribute amenities that handles append method for adding \
+            an Amenity.id to the attribute amenity_ids"""
+            if isinstance(obj, Amenity):
+                self.amenity_ids.append(obj.id)

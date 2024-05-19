@@ -40,22 +40,21 @@ class DBStorage:
                 Base.metadata.drop_all(self.engine)
 
     def all(self, cls=None):
-        """Return a dictionary containing <class>.<id>: <table_object>."""
-        rows_dict = {}
-        types = [User, State, City, Amenity, Place, Review]
-        for table in types:
-            if cls is None:
+        """Return a dictionary conataning <class>.<id>: <table_object>."""
+        if cls is None:
+            rows_dict = {}
+            types = [User, State, City, Amenity, Place, Review]
+            for table in types:
+                row = []
                 rows = self.__session.query(table).all()
-            else:
-                rows = self.__session.query(cls).all()
-            if len(rows) > 0:
-                for row in rows:
-                    key = '.'.join([row.__class__.__name__, row.id])
-                    value = row
-                    rows_dict.update({key: value})
-            if cls is not None:
-                break
-        return rows_dict
+                if len(rows) > 0:
+                    for row in rows:
+                        key = '.'.join(row.__class__, row.id)
+                        value = row
+                        rows_dict.update({key: value})
+        else:
+            rows = self.__session.query(cls).all()
+            return rows
 
     def new(self, obj):
         """Add a new object (table) to a session."""
