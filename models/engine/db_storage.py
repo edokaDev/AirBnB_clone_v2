@@ -18,6 +18,16 @@ HBNB_MYSQL_DB = os.environ.get('HBNB_MYSQL_DB')
 HBNB_ENV = os.environ.get('HBNB_ENV')
 
 
+classes = {
+    "Amenity": Amenity,
+    "City": City,
+    "Place": Place,
+    "Review": Review,
+    "State": State,
+    "User": User
+}
+
+
 class DBStorage:
     """Database storage class."""
 
@@ -40,25 +50,16 @@ class DBStorage:
                 Base.metadata.drop_all(self.engine)
 
     def all(self, cls=None):
-        """Return a dictionary conataning <class>.<id>: <table_object>."""
-        rows_dict = {}
-        if cls is None:
-            types = [User, State, City, Amenity, Place, Review]
-            for table in types:
-                rows = self.__session.query(table).all()
-                if len(rows) > 0:
-                    for row in rows:
-                        key = '.'.join([row.__class__.__name__, row.id])
-                        value = row
-                        rows_dict.update({key: value})
-        else:
-            rows = self.__session.query(cls).all()
-            if len(rows) > 0:
-                for row in rows:
-                    key = '.'.join([row.__class__.__name__, row.id])
-                    value = row
-                    rows_dict.update({key: value})
-        return rows_dict
+        """Return a dictionary containing <class>.<id>: <table_object>."""
+        new_dict = {}
+
+        for clas in classes:
+            if cls is None or cls is classes[clas] or cls is clas:
+                objs = self.__session.query(classes[clas]).all()
+                for obj in objs:
+                    key = '.'.join([obj.__class__.__name__, obj.id])
+                    new_dict.update({key: obj})
+        return (new_dict)
 
     def new(self, obj):
         """Add a new object (table) to a session."""
