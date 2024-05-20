@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+"""State Module for HBNB project."""
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.orm import Relationship
@@ -8,11 +8,14 @@ from .city import City
 
 
 class State(BaseModel, Base):
-    """ State class """
+    """State class."""
+
     __tablename__ = "states"
     id = Column(String(60), primary_key=True, nullable=False)
     name = Column(String(128), nullable=False)
-    cities = Relationship('City', backref='states', cascade='all, delete-orphan')
+    cities = Relationship('City',
+                          backref='states',
+                          cascade='all, delete-orphan')
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
