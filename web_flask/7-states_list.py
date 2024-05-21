@@ -17,7 +17,9 @@ def teardown(e):
 def states_list():
     """States List route."""
     states = storage.all('State')
-    return render_template('7-states_list.html', states=states)
+    data = { state.id : state.name for id, state in states.items() }
+    sorted_dict = dict(sorted(data.items(), key=lambda item: item[1]))
+    return render_template('7-states_list.html', states=sorted_dict)
 
 
 if __name__ == "__main__":
