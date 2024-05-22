@@ -3,6 +3,7 @@
 from flask import Flask
 from flask import render_template
 from models import storage
+from models.state import State
 
 app = Flask(__name__)
 
@@ -16,7 +17,7 @@ def teardown(e):
 @app.route('/states_list', strict_slashes=False)
 def states_list():
     """States List route."""
-    states = storage.all('State')
+    states = storage.all(State)
     states = {state.id: state.name for id, state in states.items()}
     return render_template('7-states_list.html', states=states)
 
